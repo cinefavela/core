@@ -4,10 +4,6 @@ namespace CineFavela\Core\Module;
 class ModuleManager
 {
 
-    const MIGRATION_INSTALL_PREFIX = 'mysql-install-';
-
-    const MIGRATION_UPDATE_PREFIX = 'mysql-update-';
-
     private $container = null;
 
     private $modules = array();
@@ -23,58 +19,8 @@ class ModuleManager
 
     private function setUpModule($module)
     {
-        $this->configuresDatabase($module);
         $this->configuresRoute($module);
         $this->configuresTemplate($module);
-    }
-
-    private function configuresDatabase($module)
-    {
-        $mapper = $this->getContainer()->mapper;
-        
-        $installedModule = $mapper->module(array(
-            'name' => $module->getName()
-        ))
-            ->fetch();
-        
-        if (! $installedModule) {
-            $this->installModuleDatabase($module);
-        } else {
-            $this->updateModuleDatabase($module, $installedModule->version);
-        }
-    }
-
-    private function getMigrationDir()
-    {
-        return APPLICATION_PATH . '/modules/' . ucfirst($this->getName()) . '/migration/';
-    }
-
-    private function installModuleDatabase($module)
-    {
-        $conn = $this->getContainer()->conn;
-        
-        $migrationFileToInstallDatabase = $this->getMigrationDir() . self::MIGRATION_INSTALL_PREFIX . $this->getVersion() . '.php';
-        
-        if (file_exists($migrationFileToInstallDatabase)) {
-            $conn->query(require_once ($migrationFileToInstallDatabase));
-        }
-        
-        $conn->query("INSERT INTO module VALUES (\"" . $this->getName() . "\",\"" . $this->getVersion() . "\")");
-    }
-
-    private function updateModuleDatabase($module, $from)
-    {
-        if ($from < $module->getVersion()) {
-            $conn = $this->getContainer()->conn;
-            
-            $migrationFilToUpgradeDatabase = $this->getMigrationDir() . self::MIGRATION_UPDATE_PREFIX . $this->getVersion() . '.php';
-            
-            if (file_exists($migrationFileToUpgradeDatabase)) {
-                $conn->query(require_once ($migrationFileToUpgradeDatabase));
-            }
-            
-            $conn->query("UPDATE module SET version=\"" . $this->getVersion() . "\" WHERE name=\"" . $this->getName() . "\"");
-        }
     }
 
     private function configuresRoute($module)

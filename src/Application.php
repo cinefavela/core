@@ -35,9 +35,5 @@ class Application
     {
         return self::getContainer()->twig;
     }
-
-    public static function init()
-    {
-        self::getModuleManager()->init();
-    }
+    
 }
