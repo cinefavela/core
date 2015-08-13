@@ -7,6 +7,7 @@
             "email": "ricardo.tulio@fatec.sp.gov.br"
         }
     ],
+    "minimum-stability": "dev-master",
     "require": {
         "respect/rest": "^0.6.0",
         "respect/config": "^2.0",
