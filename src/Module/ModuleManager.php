@@ -12,16 +12,6 @@ class ModuleManager
 
     private $modules = array();
 
-    public function init()
-    {
-        $modules = require_once (APPLICATION_PATH . '/modules/modules.php');
-        
-        foreach ($modules as $module) {
-            $moduleClass = "\\CineFavela\\" . $module . "\\Module";
-            $this->register(new $moduleClass());
-        }
-    }
-
     private function getContainer()
     {
         if ($this->container == null) {
@@ -123,7 +113,7 @@ class ModuleManager
         }
     }
 
-    private function register(Module $module)
+    public function register(Module $module)
     {
         $modules[$module->getName()] = $module;
         $this->setUpModule($module);
